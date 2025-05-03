@@ -3,7 +3,6 @@ package models;
 import static models.Battle.hasAdvantage;
 
 public class BattleManager {
-    private static final double STAB_BONUS = 1.5;
     private static final double TYPE_ADVANTAGE_BONUS = 1.3;
 
     public static Pokemon determineFirstAttacker(Pokemon pokemon1, Pokemon pokemon2) {
@@ -13,11 +12,6 @@ public class BattleManager {
     public static int calculateDamage(Attack attack, Pokemon attacker, Pokemon defender) {
         // Base damage calculation
         double baseDamage = attack.getPower();
-
-        // STAB (Same Type Attack Bonus)
-        if (attack.getType().equals(attacker.getType())) {
-            baseDamage *= STAB_BONUS;
-        }
 
         // Type advantage
         if (hasAdvantage(attack.getType(), defender.getType())) {

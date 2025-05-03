@@ -45,4 +45,8 @@ public class Trainer {
         return sb.toString();
     }
 
+    public boolean hasAlivePokemon(){
+        return team.stream().anyMatch(Pokemon::isAlive);
+    }
+
 }
