@@ -6,12 +6,20 @@ import java.util.List;
 
 public class Pokemon extends Creature {
     private Name name;
+    private Integer defense;
+    private Integer defenseEspecial;
+    private Integer speed;
     private List<Attack> attacks;
 
-    public Pokemon(Name name, int healthPoints) {
+    //builder
+    public Pokemon(Name name, int healthPoints, Integer defense,
+                   int defenseEspecial, int speed){
         super(name.getType(), healthPoints);
         this.name = name;
         this.attacks = new ArrayList<>();
+        this.defense = defense;
+        this.defenseEspecial = defenseEspecial;
+        this.speed = speed;
     }
 
     public Name getName() {
@@ -30,8 +38,29 @@ public class Pokemon extends Creature {
         return false;
     }
 
+    public Integer getDefense() {
+        return defense;
+    }
 
+    public void setDefense(Integer defense) {
+        this.defense = defense;
+    }
 
+    public Integer getDefenseEspecial() {
+        return defenseEspecial;
+    }
+
+    public void setDefenseEspecial(Integer defenseEspecial) {
+        this.defenseEspecial = defenseEspecial;
+    }
+
+    public Integer getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Integer speed) {
+        this.speed = speed;
+    }
 
     //print the attacks
     public void displayAttacks() {

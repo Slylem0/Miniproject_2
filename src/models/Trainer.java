@@ -34,7 +34,13 @@ public class Trainer {
         sb.append("Trainer: ").append(name).append("\n");
         sb.append("Team:\n");
         for (Pokemon p : team) {
-            sb.append("- ").append(p.getName()).append(" (Type: ").append(p.getType()).append(", HP: ").append(p.getHealthPoints()).append(")\n");
+            sb.append("- ").append(p.getName())
+                    .append(" (Type: ").append(p.getType())
+                    .append(", HP: ").append(p.getHealthPoints())
+                    .append(", Defense: ").append(p.getDefense())
+                    .append(", Special Defense: ").append(p.getDefenseEspecial())
+                    .append(", Speed: ").append(p.getSpeed())
+                    .append(")\n");
         }
         return sb.toString();
     }

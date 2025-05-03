@@ -1,42 +1,79 @@
 package models;
 
-
 import java.util.List;
 import java.util.Scanner;
 
 public class Battle {
-
-    public static void startBattle(Trainer t1, Trainer t2, Scanner scanner) {
-        System.out.println("\n--- Pokémon Battle ---");
-
-        // Choose Pokémon
-        Pokemon p1 = choosePokemon(t1, scanner);
-        Pokemon p2 = choosePokemon(t2, scanner);
-
-        System.out.println(t1.getName() + " chose " + p1.getName());
-        System.out.println(t2.getName() + " chose " + p2.getName());
-
-        // The one with less HP starts
-        boolean p1First = p1.getHealthPoints() <= p2.getHealthPoints();
-
-        while (p1.getHealthPoints() > 0 && p2.getHealthPoints() > 0) {
-            if (p1First) {
-                doTurn(p1, p2, scanner);
-                if (p2.getHealthPoints() <= 0) break;
-                doTurn(p2, p1, scanner);
-            } else {
-                doTurn(p2, p1, scanner);
-                if (p1.getHealthPoints() <= 0) break;
-                doTurn(p1, p2, scanner);
+    public static void startBattle(Trainer trainer1, Trainer trainer2, Scanner scanner) {
+        Pokemon pokemon1 = choosePokemon(trainer1, scanner);
+        Pokemon pokemon2 = choosePokemon(trainer2, scanner);
+        
+        while (true) {
+            // Determine turn order based on speed
+            Pokemon firstPokemon = BattleManager.determineFirstAttacker(pokemon1, pokemon2);
+            Pokemon secondPokemon = (firstPokemon == pokemon1) ? pokemon2 : pokemon1;
+            Trainer firstTrainer = (firstPokemon == pokemon1) ? trainer1 : trainer2;
+            Trainer secondTrainer = (firstPokemon == pokemon1) ? trainer2 : trainer1;
+            
+            System.out.println("\n" + firstPokemon.getName() + " moves first due to higher speed!");
+            
+            // First Pokémon's turn
+            executeAttack(firstPokemon, secondPokemon, firstTrainer, scanner);
+            if (!secondPokemon.isAlive()) {
+                System.out.println(secondPokemon.getName() + " fainted!");
+                announceWinner(firstTrainer);
+                break;
+            }
+            
+            // Second Pokémon's turn
+            executeAttack(secondPokemon, firstPokemon, secondTrainer, scanner);
+            if (!firstPokemon.isAlive()) {
+                System.out.println(firstPokemon.getName() + " fainted!");
+                announceWinner(secondTrainer);
+                break;
             }
         }
+    }
 
-        // Result
-        if (p1.getHealthPoints() <= 0) {
-            System.out.println(p1.getName() + " fainted. " + t2.getName() + " wins!");
-        } else {
-            System.out.println(p2.getName() + " fainted. " + t1.getName() + " wins!");
+    private static void executeAttack(Pokemon attacker, Pokemon defender, Trainer attackerTrainer, Scanner scanner) {
+        System.out.println("\n" + attackerTrainer.getName() + "'s " + attacker.getName() + "'s turn!");
+        
+        // Display attacks with their type
+        List<Attack> attacks = attacker.getAttacks();
+        for (int i = 0; i < attacks.size(); i++) {
+            Attack attack = attacks.get(i);
+            System.out.printf("%d. %s (%s - %s, Power: %d)%n", 
+                i + 1, 
+                attack.getName(), 
+                attack.getType(),
+                attack.getDamageType(),
+                attack.getPower()
+            );
         }
+        
+        // Select attack
+        System.out.print("Choose attack (1-" + attacks.size() + "): ");
+        int choice = scanner.nextInt() - 1;
+        Attack selectedAttack = attacks.get(choice);
+        
+        // Calculate and apply damage
+        int damage = BattleManager.calculateDamage(selectedAttack, attacker, defender);
+        defender.receiveDamage(damage);
+        
+        // Display attack results
+        System.out.printf("%s used %s! ", attacker.getName(), selectedAttack.getName());
+        if (selectedAttack.getType().equals(attacker.getType())) {
+            System.out.print("STAB bonus applied! ");
+        }
+        if (hasAdvantage(selectedAttack.getType(), defender.getType())) {
+            System.out.print("It's super effective! ");
+        }
+        System.out.printf("Dealt %d damage!%n", damage);
+        System.out.printf("%s has %d HP remaining!%n", defender.getName(), defender.getHealthPoints());
+    }
+
+    private static void announceWinner(Trainer winner) {
+        System.out.println("\n" + winner.getName() + " wins the battle!");
     }
 
     private static Pokemon choosePokemon(Trainer trainer, Scanner scanner) {
@@ -48,30 +85,7 @@ public class Battle {
         int choice = scanner.nextInt();
         return team.get(choice - 1);
     }
-
-    private static void doTurn(Pokemon attacker, Pokemon defender, Scanner scanner) {
-        System.out.println("\n" + attacker.getName() + " will attack.");
-        List<Attack> attacks = attacker.getAttacks();
-        for (int i = 0; i < attacks.size(); i++) {
-            System.out.println((i + 1) + ". " + attacks.get(i).getName() + " (Power: " + attacks.get(i).getPower() + ")");
-        }
-        int choice = scanner.nextInt();
-        Attack attack = attacks.get(choice - 1);
-
-        double power = attack.getPower();
-        if (hasAdvantage(attack.getType(), defender.getType())) {
-            power *= 1.3;
-            System.out.println("Type advantage! Damage increased by 30%.");
-        }
-
-        int newHp = defender.getHealthPoints() - (int) power;
-        defender.setHealthPoints(Math.max(newHp, 0));
-
-        System.out.println(attacker.getName() + " used " + attack.getName());
-        System.out.println(defender.getName() + " has " + defender.getHealthPoints() + " HP left.");
-    }
-
-    private static boolean hasAdvantage(String attackType, String defenderType) {
+    static boolean hasAdvantage(String attackType, String defenderType) {
         return switch (attackType) {
             case "Fire" -> defenderType.equals("Grass") || defenderType.equals("Steel");
             case "Water" -> defenderType.equals("Fire");
@@ -85,5 +99,5 @@ public class Battle {
             default -> false;
         };
     }
+    // Other existing methods...
 }
-

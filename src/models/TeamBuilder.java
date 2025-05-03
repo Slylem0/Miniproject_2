@@ -29,6 +29,16 @@ public class TeamBuilder {
             System.out.print("Enter HP for " + selectedName + ": ");
             int hp = scanner.nextInt();
 
+            System.out.println("Enter the defense of " + selectedName + ": ");
+            int defense = scanner.nextInt();
+
+            System.out.println("Enter the defense especial of " + selectedName + ": ");
+            int defenseEspecial = scanner.nextInt();
+
+            System.out.println("Enter the speed of " + selectedName + ": ");
+            int speed = scanner.nextInt();
+
+
             List<AttackName> availableAttacks = getAttacksByType(type);
             System.out.println("\nAvailable attacks for type: " + type);
             for (int j = 0; j < availableAttacks.size(); j++) {
@@ -55,7 +65,7 @@ public class TeamBuilder {
                 availableAttacks.remove(attackIndex);
             }
 
-            Pokemon pokemon = new Pokemon(selectedName, hp);
+            Pokemon pokemon = new Pokemon(selectedName, hp, defense, defenseEspecial, speed);
             for (Attack a : selectedAttacks) {
                 pokemon.addAttack(a);
             }
@@ -72,6 +82,9 @@ public class TeamBuilder {
             Name randomName = allNames[random.nextInt(allNames.length)];
             String type = randomName.getType();
             int hp = 100 + random.nextInt(101);
+            int defense = 100 + random.nextInt(101);
+            int defenseEspecial = 100 + random.nextInt(101);
+            int speed = 100 + random.nextInt(101);
 
             List<AttackName> attacksByType = getAttacksByType(type);
             Collections.shuffle(attacksByType);
@@ -87,7 +100,7 @@ public class TeamBuilder {
                 ));
             }
 
-            Pokemon pokemon = new Pokemon(randomName, hp);
+            Pokemon pokemon = new Pokemon(randomName, hp, defense, defenseEspecial, speed);
             for (Attack a : selectedAttacks) {
                 pokemon.addAttack(a);
             }

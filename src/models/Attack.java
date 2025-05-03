@@ -1,8 +1,6 @@
 package models;
 
 public class Attack {
-    //this is an enum created in the same file
-    // (this is new for us, we investigated and see codes in github that implement this)
     public enum DamageType {
         PHYSICAL, SPECIAL
     }
