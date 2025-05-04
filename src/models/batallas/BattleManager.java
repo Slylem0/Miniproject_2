@@ -1,6 +1,8 @@
-package models;
+package models.batallas;
 
-import static models.Battle.hasAdvantage;
+import models.pokemones.Pokemon;
+
+import static models.batallas.Battle.hasAdvantage;
 
 public class BattleManager {
     private static final double TYPE_ADVANTAGE_BONUS = 1.3;
