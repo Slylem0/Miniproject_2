@@ -12,31 +12,43 @@ public class Battle {
         Pokemon pokemon2 = choosePokemon(trainer2, scanner);
         
         while (true) {
-            // Determine turn order based on speed
+            // Determinar el orden de los turnos basado en la velocidad
             Pokemon firstPokemon = BattleManager.determineFirstAttacker(pokemon1, pokemon2);
             Pokemon secondPokemon = (firstPokemon == pokemon1) ? pokemon2 : pokemon1;
             Trainer firstTrainer = (firstPokemon == pokemon1) ? trainer1 : trainer2;
             Trainer secondTrainer = (firstPokemon == pokemon1) ? trainer2 : trainer1;
             
             System.out.println("\n" + firstPokemon.getName() + " moves first due to higher speed!");
-            
-            // First Pokémon's turn
-            // First Pokémon's turn
-            pokemon2 = executeTurn(firstPokemon, secondPokemon, firstTrainer, secondTrainer, scanner);
-            if (!secondTrainer.hasAlivePokemon()) {
-                announceWinner(firstTrainer);
-                break;
-            }
+        
+        // Turno del primer Pokémon
+        Pokemon resultDefender = executeTurn(firstPokemon, secondPokemon, firstTrainer, secondTrainer, scanner);
+        // Actualizar las referencias correctas
+        if (secondPokemon == pokemon1) {
+            pokemon1 = resultDefender;
+        } else {
+            pokemon2 = resultDefender;
+        }
+        
+        if (!secondTrainer.hasAlivePokemon()) {
+            announceWinner(firstTrainer);
+            break;
+        }
 
-            // Second Pokémon's turn
-            pokemon1 = executeTurn(secondPokemon, firstPokemon, secondTrainer, firstTrainer, scanner);
-            if (!firstTrainer.hasAlivePokemon()) {
-                announceWinner(secondTrainer);
-                break;
-            }
-
+        // Turno del segundo Pokémon
+        Pokemon resultAttacker = executeTurn(resultDefender, firstPokemon, secondTrainer, firstTrainer, scanner);
+        // Actualizar las referencias correctas
+        if (firstPokemon == pokemon1) {
+            pokemon1 = resultAttacker;
+        } else {
+            pokemon2 = resultAttacker;
+        }
+        
+        if (!firstTrainer.hasAlivePokemon()) {
+            announceWinner(secondTrainer);
+            break;
         }
     }
+}
 
 
     private static Pokemon executeTurn(Pokemon attacker, Pokemon defender, Trainer attackerTrainer,

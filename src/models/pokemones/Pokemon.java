@@ -11,6 +11,7 @@ public class Pokemon extends Creature {
     private Integer defense;
     private Integer defenseEspecial;
     private Integer speed;
+    private Integer maxhealthPoints;
     private List<Attack> attacks;
 
     //builder
@@ -22,6 +23,11 @@ public class Pokemon extends Creature {
         this.defense = defense;
         this.defenseEspecial = defenseEspecial;
         this.speed = speed;
+        this.maxhealthPoints = healthPoints;
+    }
+
+    public int getMaxHealthPoints() {
+        return maxhealthPoints;
     }
 
     public Name getName() {
@@ -74,5 +80,9 @@ public class Pokemon extends Creature {
                 System.out.println("- " + attack);
             }
         }
+    }
+    @Override
+    public String toString() {
+        return name.toString();
     }
 }
