@@ -6,10 +6,13 @@ package models.gui;
 import models.batallas.Attack;
 import models.batallas.BattleManager;
 import models.entrenadores.Trainer;
+import models.images.TrainerImages;
 import models.pokemones.Pokemon;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static models.images.TrainerImages.scaleImage;
 
 public class BattleFrame extends JFrame {
     private final Trainer entrenador1;
@@ -28,18 +31,23 @@ public class BattleFrame extends JFrame {
     public BattleFrame(Trainer entrenador1, Trainer entrenador2) {
         this.entrenador1 = entrenador1;
         this.entrenador2 = entrenador2;
+        ImageIcon trainer1Icon = scaleImage(TrainerImages.getTrainer1Image(), 150, 150);
+        ImageIcon trainer2Icon = scaleImage(TrainerImages.getTrainer2Image(), 150, 150);
 
-        // Configuración básica del frame
+        JLabel trainer1Label = new JLabel(trainer1Icon);
+        JLabel trainer2Label = new JLabel(trainer2Icon);
+
+        // ALL THE CONFIGURATIONS
         setTitle("Batalla Pokémon");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLayout(new BorderLayout());
 
-        // Panel principal de batalla
+        // MAIN PANEL INITIAL
         JPanel battlePanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Panel del Pokémon 2 (arriba a la derecha)
+        // panel of pokemon 2
         pokemonPanel2 = new JPanel(new BorderLayout());
         healthBar2 = new JProgressBar(0, 100);
         pokemonPanel2.add(new JLabel("Pokemon 2"), BorderLayout.NORTH);
@@ -49,7 +57,7 @@ public class BattleFrame extends JFrame {
         gbc.anchor = GridBagConstraints.NORTHEAST;
         battlePanel.add(pokemonPanel2, gbc);
 
-        // Panel del Pokémon 1 (abajo a la izquierda)
+        // panel od pokemon 1
         pokemonPanel1 = new JPanel(new BorderLayout());
         healthBar1 = new JProgressBar(0, 100);
         pokemonPanel1.add(new JLabel("Pokemon 1"), BorderLayout.NORTH);
@@ -58,6 +66,20 @@ public class BattleFrame extends JFrame {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.SOUTHWEST;
         battlePanel.add(pokemonPanel1, gbc);
+
+
+        //AQUIIIIII
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        battlePanel.add(trainer2Label, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.SOUTHEAST;
+        battlePanel.add(trainer1Label, gbc);
+
 
         // Panel de control (abajo)
         JPanel controlPanel = new JPanel(new BorderLayout());
@@ -78,22 +100,21 @@ public class BattleFrame extends JFrame {
         battleLog.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(battleLog);
 
-        // Agregar componentes al panel de control
         controlPanel.add(attackButtonsPanel, BorderLayout.CENTER);
         controlPanel.add(switchPokemonButton, BorderLayout.EAST);
-        controlPanel.add(scrollPane, BorderLayout.SOUTH);
 
-        // Agregar paneles principales al frame
         add(battlePanel, BorderLayout.CENTER);
         add(controlPanel, BorderLayout.SOUTH);
 
-        // Inicializar la batalla
+
+
+        // start of battle
         iniciarBatalla();
         setupListeners();
     }
 
 private void ejecutarAtaque(int attackIndex) {
-    // Verificar que el índice sea válido para el Pokémon actual
+
     Pokemon attacker = isEntrenador1Turn ? pokemon1 : pokemon2;
     Pokemon defender = isEntrenador1Turn ? pokemon2 : pokemon1;
 
@@ -113,12 +134,12 @@ private void ejecutarAtaque(int attackIndex) {
     // Actualizar la interfaz
     actualizarInterfaz();
 
-    // Verificar si la batalla ha terminado
+
     if (!verificarEstadoBatalla()) {
-        // Si la batalla continúa, cambiar el turno
+
         cambiarTurno();
     }
-    // Revalidar y repintar el JTextArea para asegurar que se actualice visualmente
+
     battleLog.revalidate();
     battleLog.repaint();
 }
@@ -142,7 +163,7 @@ private void cambiarTurno() {
 }
 
 private void actualizarControles() {
-    // Habilitar/deshabilitar controles según el turno
+
     boolean esJugadorActual = isEntrenador1Turn;
 
     // Habilitar botones de ataque solo para el jugador actual
@@ -157,10 +178,10 @@ private void actualizarControles() {
         }
     }
 
-    // Habilitar botón de cambio solo para el jugador actual
+
     switchPokemonButton.setEnabled(esJugadorActual);
 
-    // Actualizar el texto que indica de quién es el turno
+
     battleLog.append("\nTurno de " + (isEntrenador1Turn ? entrenador1.getName() : entrenador2.getName()) + "\n");
 }
 
@@ -187,7 +208,7 @@ private void actualizarControles() {
         updatePokemonDisplay(pokemonPanel1, pokemon1, healthBar1);
         updatePokemonDisplay(pokemonPanel2, pokemon2, healthBar2);
         actualizarControles();
-        // Revalidar y repintar los paneles para asegurarse de que la UI se actualice correctamente
+
         revalidate();
         repaint();
     }
@@ -198,10 +219,10 @@ private void actualizarControles() {
                 JOptionPane.showMessageDialog(this, entrenador1.getName() + ", tu Pokémon ha sido derrotado. Elige otro.");
                 pokemon1 = selectInitialPokemon(entrenador1);
                 actualizarInterfaz();
-                return false; // La batalla continúa
+                return false;
             } else {
                 anunciarGanador(entrenador2);
-                return true; // Batalla terminada
+                return true;
             }
         }
 
@@ -210,10 +231,10 @@ private void actualizarControles() {
                 JOptionPane.showMessageDialog(this, entrenador2.getName() + ", tu Pokémon ha sido derrotado. Elige otro.");
                 pokemon2 = selectInitialPokemon(entrenador2);
                 actualizarInterfaz();
-                return false; // La batalla continúa
+                return false;
             } else {
                 anunciarGanador(entrenador1);
-                return true; // Batalla terminada
+                return true;
             }
         }
 
@@ -243,7 +264,7 @@ private void actualizarControles() {
                 .toArray(Pokemon[]::new);
 
         if (options.length == 0) {
-            return null; // No hay Pokémon vivos
+            return null;
         }
 
         return (Pokemon) JOptionPane.showInputDialog(
@@ -258,7 +279,7 @@ private void actualizarControles() {
     }
 
 private void setupListeners() {
-    // Configurar listeners para los botones de ataque
+
     for (int i = 0; i < attackButtons.length; i++) {
         final int attackIndex = i;
         attackButtons[i].addActionListener(e -> {
@@ -268,7 +289,7 @@ private void setupListeners() {
         });
     }
 
-    // Configurar listener para el botón de cambio de Pokémon
+
     switchPokemonButton.addActionListener(e -> {
         System.out.println("Botón de cambio presionado por " + 
             (isEntrenador1Turn ? entrenador1.getName() : entrenador2.getName()));
@@ -277,15 +298,14 @@ private void setupListeners() {
 }
 
 private void updatePokemonDisplay(JPanel panel, Pokemon pokemon, JProgressBar healthBar) {
-    // Verificar si el Pokémon es nulo
+
     if (pokemon == null) {
         return;
     }
-    
-    // Actualizar el nombre y la salud
+
     ((JLabel)panel.getComponent(0)).setText(pokemon.getName() + " (" + pokemon.getHealthPoints() + " HP)");
     
-    // Calcular el porcentaje de salud (evitar división por cero)
+
     int maxHealth = pokemon.getMaxHealthPoints(); // Asumiendo que existe este método
     if (maxHealth <= 0) maxHealth = 1;
     
@@ -294,7 +314,7 @@ private void updatePokemonDisplay(JPanel panel, Pokemon pokemon, JProgressBar he
     healthBar.setString(pokemon.getHealthPoints() + "/" + maxHealth + " HP");
     healthBar.setStringPainted(true);
     
-    // Cambiar el color de la barra según la salud
+
     if (healthPercentage > 50) {
         healthBar.setForeground(Color.GREEN);
     } else if (healthPercentage > 25) {
